@@ -49,6 +49,7 @@
 
 from tkinter import *
 from tkcalendar import Calendar
+from datetime import datetime
 
 root = Tk()
 
@@ -67,14 +68,35 @@ var = StringVar()
 def grad_date():
     booking = open('test.txt', 'a')
     event = var.get()
-    booking.write(f"{event}, {cal.get_date()}.\n")
+    booking.write(f"{event}, {cal.get_date()}\n")
     booking.close()
+    with open(r'test.txt', 'r') as booking:
+        lines = booking.readlines()
+        for line in lines:
+            event, date = line.strip().split(', ')
+            date_format = '%m/%d/%y'
+            date_obj = datetime.strptime(date, date_format).date()
+            cal.calevent_create(date_obj, event, 'event')
 
-Button(root, text = "Get date", command = grad_date).pack(pady = 20)
+    cal.tag_config('event', background="red", foreground="white")
+    var.set("")
+
+Button(root, text = "Save entry", command = grad_date).pack(pady = 20)
 label_entry = Label(root, text="Enter event").pack(pady=10)
 event_entry = Entry(root, textvariable=var).pack(pady=10)
 
 date = Label(root, text = "")
 date.pack(pady = 20)
+
+
+with open(r'test.txt', 'r') as booking:
+    lines = booking.readlines()
+    for line in lines:
+        event, date = line.strip().split(', ')
+        date_format = '%m/%d/%y'
+        date_obj = datetime.strptime(date, date_format).date()
+        cal.calevent_create(date_obj, event, 'event')
+
+cal.tag_config('event', background="red", foreground="white")
 
 root.mainloop()
