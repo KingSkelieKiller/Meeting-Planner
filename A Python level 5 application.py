@@ -1,59 +1,10 @@
-# import tkinter
-# import calendar
-
-# yy = int(input("What year is it? "))
-# mm = 2
-
-# num_days = calendar.monthrange(yy, mm)[1]
-
-# mm = 0
-# mm = int(input("What month is it in number form?"))
-
-# if mm == 1 or mm == 3 or mm == 5 or mm == 7 or mm == 8 or mm == 10 or mm == 12:
-#     num_days = 31
-# elif mm == 2:
-#     num_days = num_days
-# else:
-#     num_days = 30
-
-# x = 0
-# y = 0 
-
-# root = tkinter.Tk()
-# root.title("Planner")
-
-# def make_table():
-#     x = 1
-#     y = 0
-#     d = 
-
-#     for i in range(num_days):
-#         label_date = tkinter.Label(root, text=)
-#         label_date.grid(column=x, row=y)
-
-#         x = x
-#         y = y+1
-
-#         entry_date = tkinter.Entry(root)
-#         entry_date.grid(column=x, row=y)
-
-#         x = x+1
-#         y = 0
-#         i = 1        
-
-# button_create = tkinter.Button(root,text = "create",command = (make_table))
-# button_create.grid(column=0, row=0)
-
-# root.mainloop()
-
-
 from tkinter import *
 from tkcalendar import Calendar
 from datetime import datetime
 
 root = Tk()
 
-root.geometry("400x400")
+root.geometry("600x600")
 
 yy = int(input("What year is it?"))
 mm = int(input("What month is it in number form?"))
@@ -61,7 +12,7 @@ dd = int(input("What is the date?"))
 
 cal = Calendar(root, selectmode = 'day', year = yy, month = mm, day = dd)
 
-cal.pack(pady = 20)
+cal.pack(pady = 10)
 
 var = StringVar()
 
@@ -86,17 +37,53 @@ label_entry = Label(root, text="Enter event").pack(pady=10)
 event_entry = Entry(root, textvariable=var).pack(pady=10)
 
 date = Label(root, text = "")
-date.pack(pady = 20)
+date.pack(pady = 10)
 
 
-with open(r'test.txt', 'r') as booking:
+with open(r'family.txt', 'r') as booking:
     lines = booking.readlines()
     for line in lines:
         event, date = line.strip().split(', ')
         date_format = '%m/%d/%y'
         date_obj = datetime.strptime(date, date_format).date()
         cal.calevent_create(date_obj, event, 'event')
+        cal.tag_config('event', background="red", foreground="white")
 
-cal.tag_config('event', background="red", foreground="white")
+
+
+var2 = StringVar()
+
+def grad_date_2():
+    booking2 = open('family.txt', 'a')
+    event2 = var2.get()
+    booking2.write(f"{event2}, {cal.get_date()}\n")
+    booking2.close()
+    with open(r'family.txt', 'r') as booking2:
+        lines = booking2.readlines()
+        for line in lines:
+            event2, date = line.strip().split(', ')
+            date_format2 = '%m/%d/%y'
+            date_obj2 = datetime.strptime(date, date_format2).date()
+            cal.calevent_create(date_obj2, event2, 'event2')
+
+    cal.tag_config('event2', background="green", foreground="white")
+    var2.set("")
+
+Button(root, text = "Save entry (family)", command = grad_date_2).pack(pady = 20)
+family_label_entry = Label(root, text="Enter family event").pack(pady=10)
+family_event_entry = Entry(root, textvariable=var2).pack(pady=10)
+
+date = Label(root, text = "")
+date.pack(pady = 10)
+
+
+with open(r'family.txt', 'r') as booking:
+    lines = booking.readlines()
+    for line in lines:
+        event2, date = line.strip().split(', ')
+        date_format2 = '%m/%d/%y'
+        date_obj2 = datetime.strptime(date, date_format2).date()
+        cal.calevent_create(date_obj2, event2, 'event2')
+        cal.tag_config('event2', background="green", foreground="white")
 
 root.mainloop()
